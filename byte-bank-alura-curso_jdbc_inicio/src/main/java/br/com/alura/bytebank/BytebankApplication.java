@@ -62,8 +62,12 @@ public class BytebankApplication {
     }
 
     private static void listarContas() {
+
+        System.out.println("Informe o nome do cliente:");
+        var nome = teclado.next();
+
         System.out.println("Contas cadastradas:");
-        var contas = service.listarContasAbertas();
+        var contas = service.listarContasAbertas(nome);
         contas.stream().forEach(System.out::println);
 
         System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu principal");

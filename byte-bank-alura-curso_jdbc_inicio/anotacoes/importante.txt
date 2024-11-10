@@ -1,0 +1,2 @@
+https://mvnrepository.com/
+repositório para pegar as dependências do mysql e outros

@@ -23,7 +23,17 @@ public class ContaService {
     private Set<Conta> contas = new HashSet<>();
 
     public Set<Conta> listarContasAbertas() {
-        return contas;
+
+        Connection conn = connection.recuperarConexao();
+
+        return new ContaDAO(conn).listar();
+    }
+
+    public Set<Conta> listarContasAbertas(String nome) {
+
+        Connection conn = connection.recuperarConexao();
+
+        return new ContaDAO(conn).listar(nome);
     }
 
     public BigDecimal consultarSaldo(Integer numeroDaConta) {
@@ -67,14 +77,27 @@ public class ContaService {
             throw new RegraDeNegocioException("Conta não pode ser encerrada pois ainda possui saldo!");
         }
 
-        contas.remove(conta);
+        removeConta(conta);
     }
 
     private Conta buscarContaPorNumero(Integer numero) {
-        return contas
+
+        Connection conn = connection.recuperarConexao();
+
+        return new ContaDAO(conn).buscarContaPorNumero(numero);
+
+        /*return contas
                 .stream()
                 .filter(c -> c.getNumero() == numero)
                 .findFirst()
-                .orElseThrow(() -> new RegraDeNegocioException("Não existe conta cadastrada com esse número!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Não existe conta cadastrada com esse número!"));*/
+    }
+
+    private void removeConta(Conta conta){
+
+        Connection conn = connection.recuperarConexao();
+
+        new ContaDAO(conn).removeConta(conta);
+
     }
 }
