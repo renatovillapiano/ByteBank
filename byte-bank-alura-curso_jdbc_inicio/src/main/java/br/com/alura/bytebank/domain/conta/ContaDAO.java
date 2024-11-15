@@ -167,6 +167,8 @@ public class ContaDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Conta conta = null;
+        Cliente cliente = null;
+        DadosCadastroCliente dadosCadastroCliente = null;
 
         String sql = "SELECT * FROM CONTA WHERE NUMERO = " + numero;
 
@@ -178,20 +180,11 @@ public class ContaDAO {
 
             while (rs.next()){
 
-                conta = new Conta(
-                        rs.getInt(1),
-                        rs.getBigDecimal(2),
-                        new Cliente(
-                                new DadosCadastroCliente(
-                                        rs.getString(3),
-                                        rs.getString(4),
-                                        rs.getString(5)
-                                )
-                        )
+                dadosCadastroCliente = new DadosCadastroCliente(rs.getString(3), rs.getString(4), rs.getString(5));
 
-                );
+                cliente = new Cliente(dadosCadastroCliente);
 
-                conta.setSaldo(BigDecimal.valueOf(Double.valueOf(rs.getString(2))));
+                conta = new Conta(rs.getInt(1), rs.getBigDecimal(2), cliente);
 
             }
 
