@@ -24,7 +24,7 @@ public class ContaDAO {
     public void salvar(DadosAberturaConta dadosDaConta){
 
         var cliente = new Cliente(dadosDaConta.dadosCliente());
-        var conta = new Conta(dadosDaConta.numero(), cliente);
+        var conta = new Conta(dadosDaConta.numero(), BigDecimal.ZERO, cliente);
 
         String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email) " +
                 "VALUES (?, ?, ?, ?, ?)";
@@ -73,7 +73,7 @@ public class ContaDAO {
 
                 Cliente cliente = new Cliente(dadosCadastroCliente);
 
-                contas.add(new Conta(numero, cliente));
+                contas.add(new Conta(numero, saldo, cliente));
 
             }
 
@@ -122,7 +122,7 @@ public class ContaDAO {
 
                 Cliente cliente = new Cliente(dadosCadastroCliente);
 
-                contas.add(new Conta(numero, cliente));
+                contas.add(new Conta(numero, saldo, cliente));
 
             }
 
@@ -137,6 +137,29 @@ public class ContaDAO {
         return  contas;
 
     }
+
+    public void alterar(Integer numero, BigDecimal valor){
+
+        PreparedStatement ps;
+
+        String sql = "UPDATE CONTA SET SALDO = ? WHERE NUMERO = ?";
+
+        try {
+            ps = conn.prepareStatement(sql);
+
+            ps.setBigDecimal(1, valor);
+            ps.setInt(2, numero);
+
+            ps.execute();
+            ps.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
 
 
     public Conta buscarContaPorNumero(Integer numero) {
@@ -157,6 +180,7 @@ public class ContaDAO {
 
                 conta = new Conta(
                         rs.getInt(1),
+                        rs.getBigDecimal(2),
                         new Cliente(
                                 new DadosCadastroCliente(
                                         rs.getString(3),

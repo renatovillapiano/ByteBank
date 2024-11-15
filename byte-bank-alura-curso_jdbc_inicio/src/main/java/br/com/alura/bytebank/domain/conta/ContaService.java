@@ -59,7 +59,11 @@ public class ContaService {
             throw new RegraDeNegocioException("Saldo insuficiente!");
         }
 
-        conta.sacar(valor);
+        BigDecimal novoSaldo = conta.getSaldo().subtract(valor);
+
+        Connection conn = connection.recuperarConexao();
+        new ContaDAO(conn).alterar(conta.getNumero(), novoSaldo);
+
     }
 
     public void realizarDeposito(Integer numeroDaConta, BigDecimal valor) {
@@ -68,7 +72,10 @@ public class ContaService {
             throw new RegraDeNegocioException("Valor do deposito deve ser superior a zero!");
         }
 
-        conta.depositar(valor);
+        BigDecimal novoSaldo = conta.getSaldo().add(valor);
+
+        Connection conn = connection.recuperarConexao();
+        new ContaDAO(conn).alterar(conta.getNumero(), novoSaldo);
     }
 
     public void encerrar(Integer numeroDaConta) {
@@ -78,6 +85,11 @@ public class ContaService {
         }
 
         removeConta(conta);
+    }
+
+    public void realizarTransferencia(Integer numeroContaOrigem, Integer numeroContaDestino, BigDecimal valor){
+        this.realizarSaque(numeroContaOrigem, valor);
+        this.realizarDeposito(numeroContaDestino, valor);
     }
 
     private Conta buscarContaPorNumero(Integer numero) {
